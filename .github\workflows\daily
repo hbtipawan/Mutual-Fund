@@ -1,0 +1,34 @@
+name: Daily MF data refresh
+on:
+  schedule:
+    - cron: "40 17 * * 1-6"   # 23:10 IST, after AMFI publishes the day's NAVs
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Restore cache (NAV history, TER, AUM)
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: mfcache-${{ github.run_id }}
+          restore-keys: mfcache-
+      - run: pip install pandas numpy scipy requests
+      - name: Fetch (AMFI + mfapi; TER/AUM refresh weekly)
+        run: python pipeline/fetch.py
+      - name: Compute analytics
+        run: python pipeline/compute.py
+      - name: Commit site data
+        run: |
+          git config user.name "pkc-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add site/data
+          git commit -m "data: $(date -u +%F)" || echo "no changes"
+          git push
+
