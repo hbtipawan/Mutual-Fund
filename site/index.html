@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PKC Fund Desk</title>
+<meta name="theme-color" content="#10233D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --desk:#EEF1F5; --card:#FFFFFF; --soft:#F5F7FA; --ink:#0F1A2A; --muted:#4D5868; --line:#D6DCE4; --track:#E4E9EF;
+  --band:#10233D; --band2:#183253; --band-ink:#FFFFFF; --band-muted:#B9C6D8; --band-line:#2B4468;
+  --accent:#E3A13A; --accent-ink:#8A5A00; --sel:#10233D; --sel-ink:#FFFFFF;
+  --up:#0B6E58; --down:#B33A22; --upbg:#E3F4EE; --downbg:#FBE9E4; --warn:#8A5A00; --warnbg:#FFF6E3; --info:#1F5FAE; --infobg:#E8F0FB;
+  --c1:#1F5FAE; --c2:#C77D0A; --c3:#0E8A6E; --c4:#7C3AED; --c5:#D4462C; --c6:#0891B2; --cb:#6B7685;
+  --shadow:0 1px 2px rgba(15,26,42,.06),0 4px 14px rgba(15,26,42,.05);
+  --display:"Archivo","Arial Narrow",Arial,sans-serif; --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fs:17px; --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --desk:#0B111B; --card:#141E2C; --soft:#1A2638; --ink:#EDF1F6; --muted:#A9B6C8; --line:#263347; --track:#223044;
+  --band:#0A1524; --band2:#112035; --band-ink:#EDF1F6; --band-muted:#9FB0C6; --band-line:#22344F;
+  --accent:#F0B456; --accent-ink:#F0B456; --sel:#DCE7F5; --sel-ink:#0B111B;
+  --up:#45C4A6; --down:#FF8A6E; --upbg:#10302A; --downbg:#3A1C16; --warn:#F2C14E; --warnbg:#2A2312; --info:#7FB2F0; --infobg:#132A45;
+  --c1:#5AA2FF; --c2:#F0B456; --c3:#45C4A6; --c4:#A78BFA; --c5:#FF8A6E; --c6:#22B8D6; --cb:#9AA6B6; color-scheme:dark; --shadow:0 1px 2px rgba(0,0,0,.4)}}
+:root[data-theme="dark"]{
+  --desk:#0B111B; --card:#141E2C; --soft:#1A2638; --ink:#EDF1F6; --muted:#A9B6C8; --line:#263347; --track:#223044;
+  --band:#0A1524; --band2:#112035; --band-ink:#EDF1F6; --band-muted:#9FB0C6; --band-line:#22344F;
+  --accent:#F0B456; --accent-ink:#F0B456; --sel:#DCE7F5; --sel-ink:#0B111B;
+  --up:#45C4A6; --down:#FF8A6E; --upbg:#10302A; --downbg:#3A1C16; --warn:#F2C14E; --warnbg:#2A2312; --info:#7FB2F0; --infobg:#132A45;
+  --c1:#5AA2FF; --c2:#F0B456; --c3:#45C4A6; --c4:#A78BFA; --c5:#FF8A6E; --c6:#22B8D6; --cb:#9AA6B6; color-scheme:dark; --shadow:0 1px 2px rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--desk);color:var(--ink);font:400 var(--fs)/1.55 var(--body)}
+a{color:var(--info)}
+button,input,select{font:inherit;color:inherit}
+.band{background:linear-gradient(180deg,var(--band),var(--band2));color:var(--band-ink);padding:18px 20px 0}
+.brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1320px;margin:0 auto}
+.brand h1{font:800 30px/1 var(--display);font-stretch:112%;margin:0;letter-spacing:.3px}
+.brand h1 b{color:var(--accent)}
+.brand .sub{color:var(--band-muted);font-size:16px}
+.brand .sp{flex:1}
+.pill{border:1px solid var(--band-line);border-radius:999px;padding:5px 12px;font-size:15px;color:var(--band-muted);background:transparent;cursor:pointer}
+.tabs{display:flex;gap:4px;max-width:1320px;margin:14px auto 0;overflow-x:auto;scrollbar-width:none}
+.tabs button{border:0;background:transparent;color:var(--band-muted);padding:12px 16px;font:700 17px var(--display);font-stretch:108%;border-radius:10px 10px 0 0;cursor:pointer;white-space:nowrap}
+.tabs button.on{background:var(--desk);color:var(--ink);box-shadow:inset 0 3px 0 var(--accent)}
+main{max-width:1320px;margin:0 auto;padding:18px 16px 80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 20px;margin-bottom:16px}
+.card h2{font:800 23px/1.2 var(--display);font-stretch:108%;margin:0 0 6px}
+.card h3{font:700 19px/1.3 var(--display);margin:14px 0 8px}
+.lede{color:var(--muted);margin:0 0 12px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.kpi{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.kpi .l{font-size:15px;color:var(--muted)}
+.kpi .v{font:800 28px/1.15 var(--display)}
+.kpi .s{font-size:15px;color:var(--muted)}
+.up{color:var(--up)} .dn{color:var(--down)} .mut{color:var(--muted)}
+table{border-collapse:collapse;width:100%}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+th{font:700 15px var(--body);color:var(--muted);position:sticky;top:0;background:var(--card);cursor:pointer;user-select:none}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+tr.click{cursor:pointer} tr.click:hover td{background:var(--soft)}
+.tw{overflow:auto;max-height:72vh;border:1px solid var(--line);border-radius:10px}
+.tw table th{z-index:1}
+.fname{font-weight:600;white-space:normal;min-width:230px;max-width:360px}
+.fname small{display:block;color:var(--muted);font-weight:400;font-size:14px}
+.badge{display:inline-block;border-radius:999px;padding:2px 10px;font:700 14px var(--body);border:1px solid transparent}
+.b-Strong{background:var(--upbg);color:var(--up);border-color:var(--up)}
+.b-Good{background:var(--infobg);color:var(--info);border-color:var(--info)}
+.b-Average{background:var(--warnbg);color:var(--warn);border-color:var(--warn)}
+.b-Weak{background:var(--downbg);color:var(--down);border-color:var(--down)}
+.b-Unrated{background:var(--soft);color:var(--muted);border-color:var(--line)}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:12px}
+.ctrl label{display:flex;flex-direction:column;font-size:15px;color:var(--muted);gap:4px}
+.ctrl input,.ctrl select{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 10px;min-width:120px;font-size:17px}
+.btn{background:var(--sel);color:var(--sel-ink);border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:6px 10px;font-size:15px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--card);padding:7px 12px;cursor:pointer;font-weight:600;font-size:15px}
+.seg button.on{background:var(--sel);color:var(--sel-ink)}
+.flag{border-radius:8px;padding:9px 12px;margin:6px 0;border-left:5px solid}
+.flag.red{background:var(--downbg);border-color:var(--down)} .flag.amber{background:var(--warnbg);border-color:var(--warn)}
+.flag.green{background:var(--upbg);border-color:var(--up)} .flag.info{background:var(--infobg);border-color:var(--info)}
+.verdict{font:800 30px/1.1 var(--display);font-stretch:110%}
+.bar{height:12px;background:var(--track);border-radius:6px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--c1);border-radius:6px}
+.pillar{display:grid;grid-template-columns:130px 1fr 44px;gap:10px;align-items:center;margin:6px 0;font-size:16px}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);padding:8px 10px;font-size:15px;white-space:nowrap;display:none;z-index:5}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:15px;margin:4px 0 6px}
+.legend span::before{content:"";display:inline-block;width:14px;height:4px;border-radius:2px;background:var(--c);margin-right:6px;vertical-align:middle}
+.heat td{font-weight:600}
+.note{font-size:15px;color:var(--muted)}
+.callout{border-left:5px solid var(--accent);background:var(--warnbg);padding:12px 14px;border-radius:8px;margin:10px 0}
+.search{position:relative}
+.search .dd{position:absolute;left:0;right:0;top:100%;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);max-height:360px;overflow:auto;z-index:20;display:none}
+.search .dd div{padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--line)}
+.search .dd div:hover,.search .dd div.on{background:var(--soft)}
+.search .dd small{color:var(--muted);display:block;font-size:14px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:4px 10px;margin:3px;font-size:15px}
+.chip button{border:0;background:transparent;cursor:pointer;font-weight:700;color:var(--muted)}
+.stack{display:flex;height:26px;border-radius:6px;overflow:hidden;margin:6px 0}
+.stack i{display:block;height:100%}
+.hide{display:none!important}
+.loading{padding:40px;text-align:center;color:var(--muted)}
+details summary{cursor:pointer;font-weight:700}
+.mini{font-size:15px}
+@media (max-width:640px){:root{--fs:16px}.brand h1{font-size:25px}.card{padding:14px}.pillar{grid-template-columns:100px 1fr 40px}}
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="brand">
+    <h1>PKC <b>FUND</b> DESK</h1>
+    <span class="sub" id="asof">Loading…</span>
+    <span class="sp"></span>
+    <button class="pill" id="themeBtn" title="Switch light/dark">◐ Theme</button>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-v="pulse">Pulse</button>
+    <button data-v="finder">Fund Finder</button>
+    <button data-v="screen">Screener</button>
+    <button data-v="fund">Fund X-Ray</button>
+    <button data-v="compare">Compare</button>
+    <button data-v="doctor">Portfolio Doctor</button>
+    <button data-v="calc">Calculators</button>
+    <button data-v="evidence">Evidence &amp; Method</button>
+  </nav>
+</header>
+<main id="app"><div class="loading">Loading fund data…</div></main>
+<script>
+"use strict";
+// ------------------------------------------------------------------ state & utils
+const S={meta:null,funds:[],by:{},series:{},view:"pulse",fund:null,cmp:[],port:[]};
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const isN=x=>typeof x==="number"&&isFinite(x);
+const pct=(x,d=1,sign=false)=>isN(x)?((sign&&x>0?"+":"")+(x*100).toFixed(d)+"%"):"–";
+const pc=(x,d=1)=>isN(x)?`<span class="${x>=0?"up":"dn"}">${pct(x,d)}</span>`:"–";
+const num=(x,d=2)=>isN(x)?x.toFixed(d):"–";
+const inr=x=>isN(x)?"₹"+Math.round(x).toLocaleString("en-IN"):"–";
+const cr=x=>isN(x)?(x>=1000?"₹"+(x/1000).toFixed(x>=10000?0:1)+"k cr":"₹"+x.toFixed(0)+" cr"):"–";
+const COLORS=["var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)"];
+const LS={get(k,d){try{return JSON.parse(localStorage.getItem("pkcfd_"+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem("pkcfd_"+k,JSON.stringify(v))}catch(e){}}};
+const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+function median(a){a=a.filter(isN).sort((x,y)=>x-y);if(!a.length)return null;const m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2}
+function quant(a,q){a=a.filter(isN).sort((x,y)=>x-y);if(!a.length)return null;const p=(a.length-1)*q,i=Math.floor(p);return a[i]+(a[Math.min(i+1,a.length-1)]-a[i])*(p-i)}
+
+async function getJSON(u){const r=await fetch(u);if(!r.ok)throw new Error(u);return r.json()}
+async function loadSeries(cat){
+  const sl=slug(cat); if(S.series[sl])return S.series[sl];
+  const d=await getJSON("data/s/"+sl+".json");
+  const t0=new Date(d.start+"T00:00:00Z").getTime();
+  d.t=Array.from({length:d.n},(_,i)=>t0+i*7*864e5);
+  S.series[sl]=d; return d;
+}
+const fmtD=t=>new Date(t).toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:"UTC"});
+const fmtM=t=>new Date(t).toLocaleDateString("en-IN",{month:"short",year:"2-digit",timeZone:"UTC"});
+
+// ------------------------------------------------------------------ SVG line chart with hover
+function lineChart(el,{series,yfmt=v=>v.toFixed(0),h=330,zero=false,area=false,log=false}){
+  el.innerHTML="";el.classList.add("chart");
+  const W=Math.max(320,el.clientWidth||900),H=h,ml=64,mr=14,mt=12,mb=34;
+  const all=series.flatMap(s=>s.pts.filter(p=>isN(p[1])));
+  if(!all.length){el.innerHTML='<div class="note">No data for this period.</div>';return}
+  let x0=Math.min(...all.map(p=>p[0])),x1=Math.max(...all.map(p=>p[0]));
+  let y0=Math.min(...all.map(p=>p[1])),y1=Math.max(...all.map(p=>p[1]));
+  if(zero){y0=Math.min(0,y0);y1=Math.max(0,y1)}
+  const pos=y0>=0;const pad=(y1-y0)*.06||1;y0-=pad;y1+=pad;if(pos&&!zero)y0=Math.max(0,y0);
+  const tf=v=>log?Math.log(v):v; const Y0=tf(y0),Y1=tf(y1);
+  const X=t=>ml+(t-x0)/(x1-x0||1)*(W-ml-mr), Yp=v=>mt+(1-(tf(v)-Y0)/(Y1-Y0||1))*(H-mt-mb);
+  let g="";
+  const nt=5;for(let i=0;i<=nt;i++){const v=y0+(y1-y0)*i/nt,y=Yp(v);g+=`<line x1="${ml}" x2="${W-mr}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${ml-8}" y="${y+5}" text-anchor="end" font-size="14" fill="var(--muted)">${yfmt(v)}</text>`}
+  if(zero&&y0<0&&y1>0)g+=`<line x1="${ml}" x2="${W-mr}" y1="${Yp(0)}" y2="${Yp(0)}" stroke="var(--muted)" stroke-dasharray="4 4"/>`;
+  const span=(x1-x0)/864e5/365, nx=Math.min(7,Math.max(2,Math.floor(W/140)));
+  for(let i=0;i<=nx;i++){const t=x0+(x1-x0)*i/nx;g+=`<text x="${X(t)}" y="${H-10}" text-anchor="middle" font-size="14" fill="var(--muted)">${span>6?new Date(t).getUTCFullYear():fmtM(t)}</text>`}
+  let paths="";
+  series.forEach(s=>{let d="",pen=false;s.pts.forEach(p=>{if(!isN(p[1])){pen=false;return}d+=(pen?"L":"M")+X(p[0]).toFixed(1)+","+Yp(p[1]).toFixed(1);pen=true});
+    if(area&&d){const f=s.pts.filter(p=>isN(p[1]));paths+=`<path d="${d}L${X(f[f.length-1][0])},${Yp(0)}L${X(f[0][0])},${Yp(0)}Z" fill="${s.color}" opacity=".12"/>`}
+    paths+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.w||2.4}" ${s.dash?'stroke-dasharray="6 5"':""} stroke-linejoin="round"/>`});
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img">${g}${paths}<line class="xh" y1="${mt}" y2="${H-mb}" stroke="var(--muted)" stroke-width="1" style="display:none"/><rect x="${ml}" y="${mt}" width="${W-ml-mr}" height="${H-mt-mb}" fill="transparent"/></svg><div class="tip"></div>`;
+  const svg=$("svg",el),tip=$(".tip",el),xh=$(".xh",el);
+  const move=ev=>{const r=svg.getBoundingClientRect(),sx=(ev.clientX-r.left)*W/r.width;if(sx<ml||sx>W-mr){tip.style.display="none";xh.style.display="none";return}
+    const t=x0+(sx-ml)/(W-ml-mr)*(x1-x0);let rows="";
+    series.forEach(s=>{let best=null,bd=1e20;for(const p of s.pts){const dd=Math.abs(p[0]-t);if(dd<bd&&isN(p[1])){bd=dd;best=p}}if(best&&bd<40*864e5)rows+=`<div><b style="color:${s.color}">●</b> ${esc(s.name)}: <b>${yfmt(best[1])}</b></div>`});
+    xh.setAttribute("x1",sx);xh.setAttribute("x2",sx);xh.style.display="";
+    tip.innerHTML=`<div class="mut">${fmtD(t)}</div>`+rows;tip.style.display="block";
+    const px=(ev.clientX-r.left);tip.style.left=Math.min(px+14,r.width-tip.offsetWidth-4)+"px";tip.style.top="8px"};
+  svg.addEventListener("pointermove",move);svg.addEventListener("pointerleave",()=>{tip.style.display="none";xh.style.display="none"});
+}
+function legend(series){return `<div class="legend">${series.map(s=>`<span style="--c:${s.color}">${esc(s.name)}</span>`).join("")}</div>`}
+
+// ------------------------------------------------------------------ series helpers (weekly Friday grid)
+function seriesFor(d,code){const v=d.f[String(code)];return v?v:null}
+function ptsFrom(t,v,fromT){const out=[];for(let i=0;i<t.length;i++){if(t[i]<fromT)continue;out.push([t[i],v[i]])}return out}
+function rebase(pts,base=10000){const f=pts.find(p=>isN(p[1]));if(!f)return pts;return pts.map(p=>[p[0],isN(p[1])?p[1]/f[1]*base:null])}
+function rollingCagr(t,v,yrs){const n=Math.round(52*yrs),o=[];for(let i=0;i<t.length;i++){const a=v[i],b=i>=n?v[i-n]:null;o.push([t[i],isN(a)&&isN(b)&&b>0?Math.pow(a/b,1/yrs)-1:null])}return o}
+function ddSeries(t,v){let pk=null;return t.map((x,i)=>{const a=v[i];if(!isN(a))return[x,null];pk=pk===null?a:Math.max(pk,a);return[x,a/pk-1]})}
+function alignFrom(pts,fromT){return pts.filter(p=>p[0]>=fromT)}
+function weeklyRets(t,v){const m=new Map();for(let i=1;i<t.length;i++){if(isN(v[i])&&isN(v[i-1])&&v[i-1]>0)m.set(t[i],v[i]/v[i-1]-1)}return m}
+function corr(a,b){const ks=[...a.keys()].filter(k=>b.has(k));if(ks.length<30)return null;const x=ks.map(k=>a.get(k)),y=ks.map(k=>b.get(k));
+  const mx=x.reduce((s,v)=>s+v,0)/x.length,my=y.reduce((s,v)=>s+v,0)/y.length;let sxy=0,sx=0,sy=0;for(let i=0;i<x.length;i++){sxy+=(x[i]-mx)*(y[i]-my);sx+=(x[i]-mx)**2;sy+=(y[i]-my)**2}return sxy/Math.sqrt(sx*sy)}
+
+// ------------------------------------------------------------------ search box widget
+function searchBox(el,onPick,{placeholder="Search any fund, AMC or category…",filter=null}={}){
+  el.classList.add("search");el.innerHTML=`<input type="search" placeholder="${placeholder}" style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);font-size:17px"><div class="dd"></div>`;
+  const inp=$("input",el),dd=$(".dd",el);let hits=[],k=0;
+  const run=()=>{const q=inp.value.trim().toLowerCase();if(q.length<2){dd.style.display="none";return}
+    const toks=q.split(/\s+/);hits=S.funds.filter(f=>(!filter||filter(f))&&toks.every(t=>(f.name+" "+f.amc+" "+f.cat).toLowerCase().includes(t)))
+      .sort((a,b)=>(b.aum||0)-(a.aum||0)).slice(0,30);k=0;
+    dd.innerHTML=hits.map((f,i)=>`<div data-i="${i}" class="${i===0?"on":""}">${esc(f.name)}<small>${esc(f.cat)} · ${cr(f.aum)} · ${f.verdict||""}</small></div>`).join("")||'<div class="mut">No match</div>';dd.style.display="block"};
+  inp.addEventListener("input",run);
+  inp.addEventListener("keydown",e=>{if(e.key==="ArrowDown"||e.key==="ArrowUp"){k=Math.max(0,Math.min(hits.length-1,k+(e.key==="ArrowDown"?1:-1)));$$("div[data-i]",dd).forEach((d,i)=>d.classList.toggle("on",i===k));e.preventDefault()}
+    if(e.key==="Enter"&&hits[k]){pick(hits[k])}});
+  dd.addEventListener("click",e=>{const d=e.target.closest("div[data-i]");if(d)pick(hits[+d.dataset.i])});
+  const pick=f=>{dd.style.display="none";inp.value="";onPick(f)};
+  document.addEventListener("click",e=>{if(!el.contains(e.target))dd.style.display="none"});
+}
+
+// ------------------------------------------------------------------ routing
+function go(v,arg){S.view=v;if(v==="fund"&&arg)S.fund=arg;location.hash=v==="fund"&&S.fund?"fund-"+S.fund:v;render()}
+window.addEventListener("hashchange",()=>{const h=location.hash.slice(1);if(!h)return;if(h.startsWith("fund-")){S.fund=+h.slice(5);S.view="fund"}else S.view=h;render()});
+$("#tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(b)go(b.dataset.v)});
+$("#themeBtn").onclick=()=>{const r=document.documentElement,cur=r.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");r.dataset.theme=cur==="dark"?"light":"dark";LS.set("theme",r.dataset.theme);render()};
+function render(){$$("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.v===S.view));const app=$("#app");window.scrollTo(0,0);
+  ({pulse:vPulse,finder:vFinder,screen:vScreen,fund:vFund,compare:vCompare,doctor:vDoctor,calc:vCalc,evidence:vEvidence}[S.view]||vPulse)(app)}
+
+// ================================================================== PULSE
+function vPulse(app){
+  const m=S.meta, eq=S.funds.filter(f=>f.grp==="Equity"), N50=S.funds.filter(f=>f.cat==="Index (Equity)"&&/nifty 50 index/i.test(f.name)&&!/next|equal|value/i.test(f.name));
+  const n50=median(N50.map(f=>f.r1y)),n503=median(N50.map(f=>f.r3y));
+  const groups=["Equity","Hybrid","Debt","Passive","FoF","Solution"];
+  const H=m.heat.slice().sort((a,b)=>groups.indexOf(a.grp)-groups.indexOf(b.grp)||(b.aum||0)-(a.aum||0));
+  const cell=x=>{if(!isN(x))return"<td>–</td>";const a=Math.min(1,Math.abs(x)/.3);return`<td style="background:${x>=0?`rgba(14,138,110,${.08+a*.42})`:`rgba(212,70,44,${.08+a*.42})`}">${pct(x,1)}</td>`};
+  const avp=m.avp.filter(a=>isN(a.beat5)||isN(a.beat3));
+  app.innerHTML=`
+  <div class="grid g4">
+    <div class="kpi"><div class="l">Schemes tracked (Direct · Growth)</div><div class="v">${m.n.toLocaleString("en-IN")}</div><div class="s">${m.cats.length} SEBI-style categories</div></div>
+    <div class="kpi"><div class="l">Nifty 50 index funds · 1Y / 3Y CAGR</div><div class="v">${pct(n50,1)} <span class="mut" style="font-size:20px">/ ${pct(n503,1)}</span></div><div class="s">median of ${N50.length} index funds</div></div>
+    <div class="kpi"><div class="l">Risk-free (overnight funds, last 1Y)</div><div class="v">${pct(m.rf,2)}</div><div class="s">the bar every fund must clear</div></div>
+    <div class="kpi"><div class="l">Equity funds scored</div><div class="v">${eq.filter(f=>isN(f.score)).length}</div><div class="s">of ${eq.length} equity schemes (≥3 yrs history)</div></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h2>Category heat-map</h2><p class="lede">Median return of every Direct-Growth fund in the category. 3Y+ figures are CAGR. Click a row to screen that category.</p>
+    <div class="tw" style="max-height:none"><table class="heat"><thead><tr><th class="l">Category</th><th>Funds</th><th>1M</th><th>3M</th><th>6M</th><th>1Y</th><th>3Y</th><th>5Y</th><th>10Y</th><th>Median TER</th><th>AUM</th></tr></thead><tbody>
+    ${H.map(r=>`<tr class="click" data-cat="${esc(r.cat)}"><td class="l"><b>${esc(r.cat)}</b> <span class="mut mini">${r.grp}</span></td><td>${r.n}</td>${cell(r.r1m)}${cell(r.r3m)}${cell(r.r6m)}${cell(r.r1y)}${cell(r.r3y)}${cell(r.r5y)}${cell(r.r10y)}<td>${isN(r.ter_med)?r.ter_med.toFixed(2)+"%":"–"}</td><td>${cr(r.aum)}</td></tr>`).join("")}
+    </tbody></table></div>
+  </div>
+  <div class="grid g2">
+  <div class="card"><h2>Active funds vs the index fund you could have bought</h2>
+    <p class="lede">Share of active funds whose CAGR beat the matching <i>investable</i> benchmark (median of real index funds, so index-fund costs are already in it).</p>
+    <div class="tw" style="max-height:none"><table><thead><tr><th class="l">Category</th><th>Beat · 3Y</th><th>Beat · 5Y</th><th>Median excess 5Y</th><th>Median fund: % of 3Y windows won</th></tr></thead><tbody>
+    ${avp.map(a=>`<tr><td class="l" style="white-space:normal">${esc(a.cat)}<br><span class="mut mini">${esc(a.bench||"")}</span></td><td>${isN(a.beat3)?`<b>${pct(a.beat3,0)}</b> <span class="mut mini">of ${a.n3}</span>`:"–"}</td><td>${isN(a.beat5)?`<b>${pct(a.beat5,0)}</b> <span class="mut mini">of ${a.n5}</span>`:"–"}</td><td>${pc(a.med_xs5,2)}</td><td>${pct(a.roll3_med,0)}</td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="note">These are <b>recent</b> windows (mid/small/500 index funds only exist since 2019), a period when mid and small caps ran ahead of large caps — which helps active funds that drift down the size ladder. SPIVA India uses the S&P India LargeMidCap index, 10-year horizons and counts dead funds; over those, most large-cap funds lose. Survivorship here flatters active funds.</p>
+  </div>
+  <div class="card"><h2>What the evidence says before you pick</h2>
+    ${evidenceBullets()}
+    <p><button class="btn" onclick="go('finder')">Start the Fund Finder →</button> <button class="btn ghost" onclick="go('evidence')">See the backtest</button></p>
+  </div></div>`;
+  $$("tr[data-cat]",app).forEach(tr=>tr.onclick=()=>{S.scrCat=tr.dataset.cat;go("screen")});
+}
+function evidenceBullets(){
+  const b=S.bt||{},ic=b.ic||{},p=b.persist||{};
+  const g=(f,o)=>ic[f]&&ic[f][o]?ic[f][o].ic:null;
+  return `<ul style="padding-left:20px;margin:6px 0">
+   <li><b>Past winners rarely stay winners.</b> In our ${b.n_dates||"–"}-date point-in-time test, a top-quartile fund (by 3Y return) stayed top-quartile over the next 3 years only <b>${pct(p.stay_top,0)}</b> of the time, and fell to the bottom quartile <b>${pct(p.fall_bottom,0)}</b> of the time — the same as a coin toss (25%).</li>
+   <li><b>Risk behaviour does persist.</b> A fund's past volatility predicts its future volatility (rank correlation <b>${num(g("vol","fvol"),2)}</b>) and its past downside capture predicts future downside capture (<b>${num(g("dnc","fdnc"),2)}</b>). So pick funds for <i>how they behave</i>, not for last year's return.</li>
+   <li><b>Cost is the strongest predictor we found.</b> Cheaper funds went on to beat their peers far more often (rank correlation <b>${num(g("ter","fxs"),2)}</b>, the largest of any signal) — partly because big, successful funds get cheaper, so read it with care. Regular plans cost ~0.5–1.5% a year more than direct.</li>
+   <li><b>Most large-cap active funds lose to the index.</b> SPIVA India (Year-End 2025) found a large majority of Indian large-cap funds underperformed over 5 and 10 years; mid/small-cap active funds have fared better.</li>
+  </ul>`;
+}
+
+// ================================================================== FINDER (goal → category → shortlist)
+const FIND_DEF={yrs:7,fall:30,purpose:"wealth",tax:"30",mode:"sip",amt:25000};
+function finderPlan(o){
+  // Category mix rules: horizon & maximum tolerable fall drive equity share (documented in Evidence tab).
+  const P=[];let eq;
+  if(o.purpose==="emergency")return{mix:[["Liquid",50],["Money Market",30],["Overnight",20]],eq:0,why:"Emergency money must be available in a day with almost no chance of loss: liquid, money-market and overnight funds."};
+  if(o.purpose==="tax")return{mix:[["ELSS (Tax Saver)",100]],eq:100,why:"ELSS gives the 80C deduction (old tax regime only) with a 3-year lock-in. Under the new regime there is no deduction, so prefer a Flexi Cap or index fund instead."};
+  if(o.yrs<1)return{mix:[["Arbitrage",60],["Liquid",40]],eq:0,why:"Under a year, equity can fall 20–35% and not recover in time. Arbitrage funds are taxed like equity (better than slab-rate debt if you are in a high bracket); liquid funds for full flexibility."};
+  if(o.yrs<3)return{mix:[["Arbitrage",40],["Short Duration",30],["Money Market",30]].map(x=>x),eq:0,why:"1–3 years: stay out of pure equity. Arbitrage for tax efficiency, short-duration / money-market debt for stability."};
+  const capByFall={10:20,20:40,30:65,40:80,55:100}[o.fall]??65;
+  const capByYrs=o.yrs<5?40:o.yrs<7?65:o.yrs<10?80:100;
+  eq=Math.min(capByFall,capByYrs);
+  const debt=100-eq;
+  if(eq<=40){P.push(["Balanced Advantage",Math.round(eq*1.2)]);P.push(["Short Duration",100-Math.round(eq*1.2)]);return{mix:P.filter(x=>x[1]>0),eq,why:`Moderate horizon or low tolerance for losses: about ${eq}% effective equity through a Balanced Advantage fund that cuts equity when markets are expensive, the rest in short-duration debt.`}}
+  const core=Math.round(eq*.45),idx=Math.round(eq*.25);let rest=eq-core-idx;
+  P.push(["Flexi Cap",core]);P.push(["Index (Equity)",idx]);
+  if(o.yrs>=7&&o.fall>=40){const mid=Math.round(rest*.6);P.push(["Mid Cap",mid]);P.push(["Small Cap",rest-mid])}else P.push(["Large & Mid Cap",rest]);
+  if(debt>0)P.push([o.yrs>=7?"Corporate Bond":"Short Duration",debt]);
+  return{mix:P.filter(x=>x[1]>0),eq,why:`${o.yrs}+ year horizon and you can live with a ~${o.fall}% fall: about ${eq}% equity. Core in a Flexi Cap fund, a low-cost Nifty 50 index fund as the anchor${o.yrs>=7&&o.fall>=40?", and a mid/small satellite for growth":", plus Large & Mid Cap for some extra growth"}.`};
+}
+function eligible(f){return isN(f.score)&&f.age>=3&&!(f.flags||[]).some(x=>x[0]==="red")&&!(isN(f.rr3_bb)&&f.rr3_bb<.3&&f.grp!=="Debt")&&(f.aum||0)>=(f.grp==="Debt"?300:500)}
+function shortlist(cat,n=3){
+  if(cat==="Index (Equity)"){return S.funds.filter(f=>f.cat==="Index (Equity)"&&/nifty 50 index/i.test(f.name)&&!/next|equal|value|elss|tax/i.test(f.name)&&f.age>=2).sort((a,b)=>(b.score||0)-(a.score||0)||(a.ter||9)-(b.ter||9)).slice(0,n)}
+  return S.funds.filter(f=>f.cat===cat&&eligible(f)).sort((a,b)=>b.score-a.score).slice(0,n)
+}
+function catRisk(cat){const fs=S.funds.filter(f=>f.cat===cat&&(cat!=="Index (Equity)"||/nifty 50 index/i.test(f.name)&&!/next|equal|value/i.test(f.name)));return{mdd:median(fs.map(f=>f.mdd)),worst1:median(fs.map(f=>f.rr1_min)),med3:median(fs.map(f=>f.rr3_med)),vol:median(fs.map(f=>f.vol3))}}
+function vFinder(app){
+  const o=Object.assign({},FIND_DEF,LS.get("finder",{}));
+  app.innerHTML=`<div class="card"><h2>Fund Finder — from your goal to a shortlist</h2>
+   <p class="lede">Tell it your horizon and how big a fall you can sit through. It picks the categories first (that decides ~90% of your outcome), then the best-behaved, lowest-risk-of-regret funds inside each.</p>
+   <div class="ctrl">
+    <label>Purpose<select id="fp"><option value="wealth">Long-term wealth</option><option value="goal">A specific goal</option><option value="tax">Tax saving (80C, old regime)</option><option value="emergency">Emergency fund</option></select></label>
+    <label>Years until you need the money<input id="fy" type="number" min="0" max="40" value="${o.yrs}"></label>
+    <label>Biggest fall you can sit through<select id="ff"><option value="10">10% — very low</option><option value="20">20% — low</option><option value="30">30% — moderate</option><option value="40">40% — high</option><option value="55">55% — very high</option></select></label>
+    <label>Tax slab<select id="ft"><option value="0">0–5%</option><option value="20">20%</option><option value="30">30%+</option></select></label>
+    <label>Investing as<select id="fm"><option value="sip">Monthly SIP</option><option value="lump">Lump sum</option></select></label>
+    <label>Amount (₹)<input id="fa" type="number" min="500" step="500" value="${o.amt}"></label>
+    <button class="btn" id="fgo">Build my plan</button>
+   </div></div><div id="fout"></div>`;
+  $("#fp").value=o.purpose;$("#ff").value=String(o.fall);$("#ft").value=o.tax;$("#fm").value=o.mode;
+  const run=()=>{const q={purpose:$("#fp").value,yrs:+$("#fy").value||0,fall:+$("#ff").value,tax:$("#ft").value,mode:$("#fm").value,amt:+$("#fa").value||0};LS.set("finder",q);
+    const pl=finderPlan(q),out=$("#fout");
+    const cols=["#1F5FAE","#C77D0A","#0E8A6E","#7C3AED","#D4462C","#0891B2"];
+    let html=`<div class="card"><h2>Your mix · about ${pl.eq}% equity</h2><p>${pl.why}</p>
+      <div class="stack">${pl.mix.map((m,i)=>`<i style="width:${m[1]}%;background:${cols[i%6]}" title="${m[0]} ${m[1]}%"></i>`).join("")}</div>
+      <div class="legend">${pl.mix.map((m,i)=>`<span style="--c:${cols[i%6]}">${esc(m[0])} · <b>${m[1]}%</b> = ${inr(q.amt*m[1]/100)}${q.mode==="sip"?"/mo":""}</span>`).join("")}</div>
+      ${taxNote(q,pl)}</div>`;
+    pl.mix.forEach(([cat,w],i)=>{const sl=shortlist(cat),rk=catRisk(cat);
+      html+=`<div class="card"><h2 style="color:${cols[i%6]}">${esc(cat==="Index (Equity)"?"Nifty 50 index fund":cat)} · ${w}%</h2>
+      <p class="lede">What this category has really done (median fund): worst 1-year return in the last 5Y windows <b class="dn">${pct(rk.worst1,0)}</b>, worst fall ever <b class="dn">${pct(rk.mdd,0)}</b>, median 3-year rolling CAGR <b>${pct(rk.med3,1)}</b> (3Y windows ending in the last 5 years). Plan for the bad numbers, not the good one.</p>
+      ${sl.length?fundTable(sl,["score","r3y","r5y","rr3_bb","dnc3","mdd3","ter","aum"]):'<p class="note">No fund in this category passes the quality gates (≥3 yrs, size, no red flags).</p>'}
+      ${cat!=="Index (Equity)"&&isPassiveBetter(cat)?`<div class="callout">In <b>${esc(cat)}</b> only ${pct(isPassiveBetter(cat).beat,0)} of active funds beat the index fund over ${isPassiveBetter(cat).yrs} years. A low-cost index fund is a perfectly sound choice here.</div>`:""}
+      </div>`});
+    html+=`<div class="card"><h3>How the shortlist is chosen</h3><p class="note">Gates: ≥3 years of history, AUM ≥ ₹500 cr (₹300 cr for debt), no recent credit-event NAV fall, and (equity/hybrid) beat the index fund in at least 30% of 3-year windows. Ranked by PKC Score, which weights cost, downside behaviour, consistency against an investable index fund, and risk-adjusted return. The backtest on the Evidence tab shows <b>no score — ours or anyone's — reliably predicts which fund will top the next 3 years</b>; it does predict risk behaviour. So treat the shortlist as "sound, well-behaved, fairly priced", then split money across 2 funds rather than chasing the #1.</p></div>`;
+    out.innerHTML=html;$$("tr[data-code]",out).forEach(tr=>tr.onclick=()=>go("fund",+tr.dataset.code));
+  };
+  $("#fgo").onclick=run;run();
+}
+function isPassiveBetter(cat){const a=S.meta.avp.find(x=>x.cat===cat);if(!a)return null;if(isN(a.beat5)&&a.n5>=6&&a.beat5<.5)return{beat:a.beat5,yrs:5};if(isN(a.beat3)&&a.n3>=6&&a.beat3<.4)return{beat:a.beat3,yrs:3};return null}
+function taxNote(q,pl){const s=q.tax;return `<p class="note"><b>Tax (FY 2026-27):</b> equity & arbitrage funds — 20% if sold within 12 months, 12.5% on long-term gains above ₹1.25 lakh a year. Debt funds bought after 1 Apr 2023 — taxed at your slab (${s==="30"?"30%+":s+"%"}) whatever the holding period${s==="30"&&q.yrs<3?"; at your slab, arbitrage funds usually leave more in hand than liquid/short-duration funds for 1-year+ holds":""}. Rules can change — confirm with your CA.</p>`}
+
+// ------------------------------------------------------------------ generic fund table
+const COLDEF={
+  score:["Score",f=>isN(f.score)?`<b>${f.score.toFixed(0)}</b>`:"–",true],verdict:["Verdict",f=>`<span class="badge b-${f.verdict}">${f.verdict}</span>`],
+  r1m:["1M",f=>pc(f.r1m)],r3m:["3M",f=>pc(f.r3m)],r6m:["6M",f=>pc(f.r6m)],r1y:["1Y",f=>pc(f.r1y)],r3y:["3Y",f=>pc(f.r3y)],r5y:["5Y",f=>pc(f.r5y)],r10y:["10Y",f=>pc(f.r10y)],
+  sip5:["SIP 5Y XIRR",f=>pc(f.sip5)],rr3_med:["Med 3Y roll",f=>pc(f.rr3_med)],rr3_min:["Worst 3Y roll",f=>pc(f.rr3_min)],rr1_min:["Worst 1Y roll",f=>pc(f.rr1_min)],
+  rr3_bb:["Beat index 3Y",f=>pct(f.rr3_bb,0)],rr3_bcat:["Beat peers 3Y",f=>pct(f.rr3_bcat,0)],rr1_bcat:["Beat peers 1Y",f=>pct(f.rr1_bcat,0)],
+  dnc3:["Down cap.",f=>num(f.dnc3,0)],upc3:["Up cap.",f=>num(f.upc3,0)],mdd3:["Max DD 3Y",f=>pc(f.mdd3,0)],mdd:["Max DD",f=>pc(f.mdd,0)],vol3:["Vol 3Y",f=>pct(f.vol3,1)],
+  sharpe3:["Sharpe",f=>num(f.sharpe3)],sortino3:["Sortino",f=>num(f.sortino3)],alpha3:["Alpha 3Y",f=>pc(f.alpha3)],beta3:["Beta",f=>num(f.beta3)],ir3:["Info ratio",f=>num(f.ir3)],
+  ter:["TER",f=>isN(f.ter)?f.ter.toFixed(2)+"%":"–"],aum:["AUM",f=>cr(f.aum)],age:["Age",f=>isN(f.age)?f.age.toFixed(1)+"y":"–"],te3:["Track err",f=>pct(f.te3,2)],td1:["1Y vs peers",f=>pc(f.td1,2)],
+};
+function fundTable(list,cols,sortable=false){
+  return `<div class="tw" style="max-height:none"><table><thead><tr><th class="l">Fund</th>${cols.map(c=>`<th data-k="${c}">${COLDEF[c][0]}</th>`).join("")}</tr></thead><tbody>
+  ${list.map(f=>`<tr class="click" data-code="${f.code}"><td class="fname">${esc(f.name)}<small>${esc(f.cat)} · <span class="badge b-${f.verdict}" style="font-size:12px;padding:0 7px">${f.verdict}</span></small></td>${cols.map(c=>`<td>${COLDEF[c][1](f)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+
+// ================================================================== SCREENER
+const PRESETS={Overview:["verdict","score","r1y","r3y","r5y","rr3_bb","dnc3","ter","aum","age"],Returns:["r1m","r3m","r6m","r1y","r3y","r5y","r10y","sip5","rr3_med"],
+  Risk:["vol3","mdd","mdd3","rr1_min","rr3_min","dnc3","upc3","sortino3","sharpe3"],Consistency:["rr3_bb","rr3_bcat","rr1_bcat","rr3_med","rr3_min","ir3","alpha3","beta3"],
+  Cost:["ter","aum","age","score","r5y"],Passive:["score","ter","td1","te3","r1y","r3y","aum","age"]};
+function vScreen(app){
+  const st=Object.assign({grp:"Equity",cat:S.scrCat||"",q:"",age:0,aum:0,ter:9,ver:"",preset:"Overview",sort:"score",dir:-1},LS.get("scr",{}),S.scrCat?{cat:S.scrCat,grp:""}:{});S.scrCat=null;
+  const cats=S.meta.cats;
+  app.innerHTML=`<div class="card"><h2>Screener</h2><p class="lede">Every Direct-Growth scheme with full metrics. Click a column to sort, a row to X-ray the fund.</p>
+  <div class="ctrl">
+   <label>Group<select id="sg"><option value="">All</option>${["Equity","Hybrid","Debt","Passive","FoF","Solution"].map(g=>`<option>${g}</option>`).join("")}</select></label>
+   <label>Category<select id="sc"><option value="">All</option>${cats.map(c=>`<option>${esc(c.cat)}</option>`).join("")}</select></label>
+   <label>Search<input id="sq" placeholder="name / AMC" value="${esc(st.q)}"></label>
+   <label>Min age (yrs)<input id="sa" type="number" min="0" step="1" value="${st.age}" style="min-width:90px"></label>
+   <label>Min AUM (₹ cr)<input id="su" type="number" min="0" step="100" value="${st.aum}" style="min-width:110px"></label>
+   <label>Max TER %<input id="st" type="number" min="0" step="0.1" value="${st.ter}" style="min-width:90px"></label>
+   <label>Verdict<select id="sv"><option value="">Any</option>${["Strong","Good","Average","Weak","Unrated"].map(v=>`<option>${v}</option>`).join("")}</select></label>
+  </div>
+  <div class="seg" id="spre">${Object.keys(PRESETS).map(p=>`<button data-p="${p}">${p}</button>`).join("")}</div> <span class="note" id="scount"></span>
+  <div id="stab" style="margin-top:10px"></div></div>`;
+  $("#sg").value=st.grp;$("#sc").value=st.cat;$("#sv").value=st.ver;
+  const draw=()=>{Object.assign(st,{grp:$("#sg").value,cat:$("#sc").value,q:$("#sq").value.trim().toLowerCase(),age:+$("#sa").value||0,aum:+$("#su").value||0,ter:+$("#st").value||9,ver:$("#sv").value});LS.set("scr",st);
+    $$("#spre button").forEach(b=>b.classList.toggle("on",b.dataset.p===st.preset));
+    let L=S.funds.filter(f=>(!st.grp||f.grp===st.grp)&&(!st.cat||f.cat===st.cat)&&(!st.q||(f.name+" "+f.amc).toLowerCase().includes(st.q))&&(f.age||0)>=st.age&&(f.aum||0)>=st.aum&&(!isN(f.ter)||f.ter<=st.ter)&&(!st.ver||f.verdict===st.ver));
+    const k=st.sort;L.sort((a,b)=>{const x=a[k],y=b[k];if(!isN(x)&&!isN(y))return 0;if(!isN(x))return 1;if(!isN(y))return -1;return (x-y)*st.dir});
+    $("#scount").textContent=`${L.length} funds`+(L.length>400?" · showing first 400":"");
+    const cols=PRESETS[st.preset];$("#stab").innerHTML=fundTable(L.slice(0,400),cols);
+    $$("#stab th[data-k]").forEach(th=>{if(th.dataset.k===k)th.innerHTML+=st.dir<0?" ▼":" ▲";th.onclick=()=>{if(st.sort===th.dataset.k)st.dir*=-1;else{st.sort=th.dataset.k;st.dir=["ter","dnc3","vol3","age","te3"].includes(th.dataset.k)?1:-1}draw()}});
+    $$("#stab tr[data-code]").forEach(tr=>tr.onclick=()=>go("fund",+tr.dataset.code));
+  };
+  ["#sg","#sc","#sa","#su","#st","#sv"].forEach(s=>$(s).onchange=()=>{if(s==="#sg")$("#sc").value="";draw()});$("#sq").oninput=draw;
+  $("#spre").onclick=e=>{const b=e.target.closest("button");if(b){st.preset=b.dataset.p;draw()}};draw();
+}
+
+// ================================================================== FUND X-RAY
+async function vFund(app){
+  if(!S.fund){S.fund=(S.funds.find(f=>/parag parikh flexi/i.test(f.name))||S.funds[0]).code}
+  const f=S.by[S.fund];if(!f){app.innerHTML='<div class="card">Fund not found.</div>';return}
+  app.innerHTML=`<div class="card"><div id="fs"></div></div><div id="fbody"><div class="loading">Loading history…</div></div>`;
+  searchBox($("#fs"),x=>go("fund",x.code));
+  const d=await loadSeries(f.cat), v=seriesFor(d,f.code);
+  const peers=S.funds.filter(x=>x.cat===f.cat);
+  const rankOf=(k,hi=true)=>{const vals=peers.map(x=>x[k]).filter(isN);if(!isN(f[k])||vals.length<3)return"";const better=vals.filter(x=>hi?x>f[k]:x<f[k]).length;return`<span class="mut mini">#${better+1}/${vals.length}</span>`};
+  const P=f.pillars||{};
+  const regCost=isN(f.ter)&&isN(f.ter_reg)?costGap(f):null;
+  const st=f.style;
+  const stCols={Large:"#1F5FAE",Mid:"#C77D0A",Small:"#D4462C",Gold:"#E3A13A","Debt/Cash":"#0E8A6E"};
+  const pas=isPassiveBetter(f.cat);
+  const top=peers.filter(x=>isN(x.score)).sort((a,b)=>b.score-a.score).slice(0,8);
+  $("#fbody").innerHTML=`
+  <div class="card">
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+      <div style="flex:1;min-width:280px"><h2 style="font-size:27px">${esc(f.name)}</h2>
+        <div class="mut">${esc(f.amc)} · <b>${esc(f.cat)}</b> · since ${fmtD(new Date(f.start).getTime())} (${num(f.age,1)} yrs) · AMFI code ${f.code}</div>
+        <div class="mut">NAV ₹${num(f.nav,4)} on ${fmtD(new Date(f.date).getTime())} · Benchmark used: ${esc(f.bench||"category peers")}</div>
+        <p><button class="btn sm" id="addCmp">+ Compare</button> <button class="btn sm ghost" id="addPort">+ Portfolio Doctor</button></p></div>
+      <div style="min-width:260px">
+        <div class="verdict">${isN(f.score)?f.score.toFixed(0):"–"}<span class="mut" style="font-size:18px">/100</span> <span class="badge b-${f.verdict}" style="font-size:18px;vertical-align:middle">${f.verdict}</span></div>
+        <div class="mut mini">PKC Score within ${esc(f.cat)}${f.crank?` · rank ${f.crank}/${f.cn}`:""}</div>
+        ${Object.entries(P).map(([k,val])=>`<div class="pillar"><span>${k}</span><div class="bar"><i style="width:${val}%;background:${val>=66?"var(--up)":val>=40?"var(--c1)":"var(--down)"}"></i></div><b>${val}</b></div>`).join("")}
+      </div>
+    </div>
+    <div class="grid g4" style="margin-top:12px">
+      <div class="kpi"><div class="l">AUM (all plans)</div><div class="v">${cr(f.aum)}</div><div class="s">${esc(S.meta.aum_period||"")} avg</div></div>
+      <div class="kpi"><div class="l">TER Direct</div><div class="v">${isN(f.ter)?f.ter.toFixed(2)+"%":"–"}</div><div class="s">${isN(f.ber)?`BER ${f.ber.toFixed(2)}% + levies ${num(f.levies,2)}%`:""}${isN(f.ter_reg)?` · Regular ${f.ter_reg.toFixed(2)}%`:""}</div></div>
+      <div class="kpi"><div class="l">5Y CAGR ${rankOf("r5y")}</div><div class="v">${pc(f.r5y)}</div><div class="s">3Y ${pct(f.r3y)} · 1Y ${pct(f.r1y)}</div></div>
+      <div class="kpi"><div class="l">Worst fall ever</div><div class="v dn">${pct(f.mdd,1)}</div><div class="s">${f.mdd_date?fmtD(new Date(f.mdd_date).getTime()):""}${isN(f.mdd_rec_days)?` · recovered in ${Math.round(f.mdd_rec_days/30)} mo`:" · not yet recovered"}</div></div>
+    </div>
+    ${(f.flags||[]).map(x=>`<div class="flag ${x[0]}">${esc(x[1])}</div>`).join("")}
+    ${pas&&f.grp!=="Passive"?`<div class="flag info">Category context: only ${pct(pas.beat,0)} of active ${esc(f.cat)} funds beat the index fund over ${pas.yrs} years.</div>`:""}
+  </div>
+  <div class="card"><h2>Growth of ₹10,000</h2><div class="seg" id="per">${["1Y","3Y","5Y","10Y","Max"].map(p=>`<button data-p="${p}">${p}</button>`).join("")}</div><div id="lg1"></div><div id="ch1"></div></div>
+  <div class="grid g2">
+    <div class="card"><h2>Rolling 3-year return</h2><p class="lede">Every 3-year holding period, ending each week. Above the dashed index line = beat the index fund.</p><div id="lg2"></div><div id="ch2"></div>
+      <p class="mini">3Y windows (last 5Y): median <b>${pct(f.rr3_med)}</b> · worst <b>${pct(f.rr3_min)}</b> · best ${pct(f.rr3_max)} · beat index <b>${pct(f.rr3_bb,0)}</b> · beat peer median <b>${pct(f.rr3_bcat,0)}</b></p></div>
+    <div class="card"><h2>Drawdown — how deep, how long</h2><p class="lede">Fall from the previous peak. This is what you must be able to sit through.</p><div id="lg3"></div><div id="ch3"></div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h2>Returns & risk</h2><table>
+      <tr><td class="l">Trailing 1Y / 3Y / 5Y / 10Y</td><td>${pc(f.r1y)} · ${pc(f.r3y)} · ${pc(f.r5y)} · ${pc(f.r10y)}</td></tr>
+      <tr><td class="l">SIP XIRR 3Y / 5Y</td><td>${pc(f.sip3)} · ${pc(f.sip5)}</td></tr>
+      <tr><td class="l">Volatility 3Y ${rankOf("vol3",false)}</td><td>${pct(f.vol3)}</td></tr>
+      <tr><td class="l">Sharpe / Sortino 3Y</td><td>${num(f.sharpe3)} / ${num(f.sortino3)}</td></tr>
+      <tr><td class="l">Morningstar-style risk-adj. return 3Y</td><td>${pc(f.mrar3)}</td></tr>
+      <tr><td class="l">Upside / downside capture 3Y ${rankOf("dnc3",false)}</td><td>${num(f.upc3,0)} / ${num(f.dnc3,0)}</td></tr>
+      <tr><td class="l">Alpha / beta / R² vs benchmark 3Y</td><td>${pc(f.alpha3)} / ${num(f.beta3)} / ${num(f.r2_3)}</td></tr>
+      <tr><td class="l">Excess return / info ratio 3Y</td><td>${pc(f.xs3)} / ${num(f.ir3)}</td></tr>
+      <tr><td class="l">Max drawdown 3Y / current</td><td>${pc(f.mdd3)} / ${pc(f.cdd)}</td></tr>
+      <tr><td class="l">% of 1Y windows with a loss</td><td>${isN(f.rr1_pos)?pct(1-f.rr1_pos,0):"–"}</td></tr>
+    </table><p class="note">Capture: 100 = moves exactly like the benchmark. Down-capture 80 means it fell only 80% as much in down months.</p></div>
+    <div class="card"><h2>What it really holds (returns-based style)</h2>
+      ${st?`<p class="lede">Weekly returns regressed on Nifty 50, Midcap 150, Smallcap 250, gold and short-term debt (Sharpe's style analysis). Fit R² ${num(f.style_r2,2)}.</p>
+      <div class="stack">${Object.entries(st).map(([k,x])=>`<i style="width:${x}%;background:${stCols[k]}" title="${k} ${x}%"></i>`).join("")}</div>
+      <div class="legend">${Object.entries(st).map(([k,x])=>`<span style="--c:${stCols[k]}">${k} <b>${x.toFixed(0)}%</b>${f.style1&&isN(f.style1[k])?` <span class="mut">(1Y ${f.style1[k].toFixed(0)}%)</span>`:""}</span>`).join("")}</div>
+      <p class="note">"Debt/Cash" also absorbs anything that doesn't move with Indian equity — foreign stocks, arbitrage, cash. Use the factsheet for exact holdings.</p>`:'<p class="note">Style analysis applies to equity & hybrid funds with 3+ years of history.</p>'}
+      ${regCost?`<h3>Direct vs Regular plan</h3><p>On ₹10 lakh held 15 years at ${pct(regCost.r,0)} gross, the Regular plan's extra ${num(f.ter_reg-f.ter,2)}% a year costs about <b class="dn">${inr(regCost.gap)}</b>.</p>`:""}
+      ${(f.events||[]).length?`<h3>Credit-event scan</h3>${f.events.map(e=>`<div class="flag red">${fmtD(new Date(e[0]).getTime())}: one-day NAV move ${pct(e[1],2)}</div>`).join("")}`:""}
+    </div>
+  </div>
+  <div class="card"><h2>Calendar-year returns</h2><div id="cyt"></div></div>
+  <div class="card"><h2>Best-scored peers in ${esc(f.cat)}</h2>${fundTable(top,["score","r1y","r3y","r5y","rr3_bb","dnc3","mdd3","ter","aum"])}</div>`;
+  $("#addCmp").onclick=()=>{if(!S.cmp.includes(f.code))S.cmp.push(f.code);S.cmp=S.cmp.slice(-4);LS.set("cmp",S.cmp);go("compare")};
+  $("#addPort").onclick=()=>{if(!S.port.find(p=>p.code===f.code))S.port.push({code:f.code,amt:100000});LS.set("port",S.port);go("doctor")};
+  $$("#fbody tr[data-code]").forEach(tr=>tr.onclick=()=>go("fund",+tr.dataset.code));
+  if(!v){$("#ch1").innerHTML='<p class="note">No weekly history.</p>';return}
+  const t=d.t, last=t[t.length-1];
+  const drawGrowth=p=>{$$("#per button").forEach(b=>b.classList.toggle("on",b.dataset.p===p));
+    const yrs={"1Y":1,"3Y":3,"5Y":5,"10Y":10,Max:50}[p];let from=last-yrs*365.25*864e5;
+    const firstF=t[v.findIndex(isN)];from=Math.max(from,firstF);
+    const ser=[{name:f.name,color:"var(--c1)",pts:rebase(ptsFrom(t,v,from)),w:3}];
+    if(d.cat_med)ser.push({name:f.cat+" median",color:"var(--c2)",pts:rebase(ptsFrom(t,d.cat_med,from))});
+    if(d.bench)ser.push({name:d.bench_name||"Benchmark",color:"var(--cb)",pts:rebase(ptsFrom(t,d.bench,from)),dash:true});
+    $("#lg1").innerHTML=legend(ser);lineChart($("#ch1"),{series:ser,yfmt:x=>"₹"+Math.round(x).toLocaleString("en-IN")});};
+  $("#per").onclick=e=>{const b=e.target.closest("button");if(b)drawGrowth(b.dataset.p)};drawGrowth(f.age>=5?"5Y":"Max");
+  const s2=[{name:f.name,color:"var(--c1)",pts:rollingCagr(t,v,3),w:3}];if(d.bench)s2.push({name:"Index fund",color:"var(--cb)",pts:rollingCagr(t,d.bench,3),dash:true});if(d.cat_med)s2.push({name:"Peer median",color:"var(--c2)",pts:rollingCagr(t,d.cat_med,3)});
+  s2.forEach(s=>s.pts=s.pts.filter(p=>isN(p[1])||p[0]>t[0]+3.1*365*864e5));
+  $("#lg2").innerHTML=legend(s2);lineChart($("#ch2"),{series:s2,yfmt:x=>(x*100).toFixed(0)+"%",zero:true,h:300});
+  const s3=[{name:f.name,color:"var(--c5)",pts:ddSeries(t,v),w:2.4}];if(d.bench)s3.push({name:"Index fund",color:"var(--cb)",pts:ddSeries(t,d.bench).map(p=>[p[0],p[0]>=t[v.findIndex(isN)]?p[1]:null]),dash:true});
+  $("#lg3").innerHTML=legend(s3);lineChart($("#ch3"),{series:s3,yfmt:x=>(x*100).toFixed(0)+"%",zero:true,area:true,h:300});
+  // calendar years vs peer median
+  const yrsK=Object.keys(f.cy||{}).sort();const cmY={};
+  if(d.cat_med){const byY={};t.forEach((x,i)=>{const y=new Date(x).getUTCFullYear();if(isN(d.cat_med[i]))byY[y]=d.cat_med[i]});yrsK.forEach(y=>{if(byY[y]&&byY[y-1])cmY[y]=byY[y]/byY[y-1]-1})}
+  const bY={};if(d.bench){const byY={};t.forEach((x,i)=>{const y=new Date(x).getUTCFullYear();if(isN(d.bench[i]))byY[y]=d.bench[i]});yrsK.forEach(y=>{if(byY[y]&&byY[y-1])bY[y]=byY[y]/byY[y-1]-1})}
+  $("#cyt").innerHTML=`<div class="tw" style="max-height:none"><table><thead><tr><th class="l">Year</th>${yrsK.map(y=>`<th>${y}${+y===new Date().getFullYear()?" YTD":""}</th>`).join("")}</tr></thead><tbody>
+   <tr><td class="l"><b>This fund</b></td>${yrsK.map(y=>`<td><b>${pc(f.cy[y])}</b></td>`).join("")}</tr>
+   <tr><td class="l">Peer median</td>${yrsK.map(y=>`<td>${pc(cmY[y])}</td>`).join("")}</tr>
+   ${d.bench?`<tr><td class="l">Index fund</td>${yrsK.map(y=>`<td>${pc(bY[y])}</td>`).join("")}</tr>`:""}
+   <tr><td class="l">Beat peers?</td>${yrsK.map(y=>`<td>${isN(cmY[y])&&isN(f.cy[y])?(f.cy[y]>cmY[y]?'<span class="up">✔</span>':'<span class="dn">✘</span>'):"–"}</td>`).join("")}</tr></tbody></table></div>
+   <p class="note">Peer/index years computed from weekly closes; first year of a fund may be partial.</p>`;
+}
+function costGap(f){const r=Math.max(.06,Math.min(.14,f.rr3_med||f.r5y||.1))+f.ter/100;const a=1e6*Math.pow(1+r-f.ter/100,15),b=1e6*Math.pow(1+r-f.ter_reg/100,15);return{gap:a-b,r}}
+
+// ================================================================== COMPARE
+async function vCompare(app){
+  S.cmp=S.cmp.filter(c=>S.by[c]);
+  app.innerHTML=`<div class="card"><h2>Compare up to 4 funds</h2><div id="cs"></div><div id="cchips" style="margin-top:8px"></div></div><div id="cbody"></div>`;
+  searchBox($("#cs"),f=>{if(!S.cmp.includes(f.code))S.cmp.push(f.code);S.cmp=S.cmp.slice(-4);LS.set("cmp",S.cmp);vCompare(app)},{placeholder:"Add a fund to compare…"});
+  $("#cchips").innerHTML=S.cmp.map((c,i)=>`<span class="chip" style="border-color:${COLORS[i]}"><b style="color:${COLORS[i]}">●</b>${esc(S.by[c].name)}<button data-c="${c}">×</button></span>`).join("")||'<span class="note">Add funds from the search box, or with "+ Compare" on any Fund X-Ray.</span>';
+  $$("#cchips button").forEach(b=>b.onclick=()=>{S.cmp=S.cmp.filter(c=>c!==+b.dataset.c);LS.set("cmp",S.cmp);vCompare(app)});
+  if(!S.cmp.length)return;
+  const fs=S.cmp.map(c=>S.by[c]);
+  const ds=await Promise.all(fs.map(f=>loadSeries(f.cat)));
+  const rows=[["Category",f=>esc(f.cat)],["Verdict / score",f=>`<span class="badge b-${f.verdict}">${f.verdict}</span> ${isN(f.score)?f.score.toFixed(0):""}`],["AUM",f=>cr(f.aum)],["TER (direct)",f=>isN(f.ter)?f.ter.toFixed(2)+"%":"–"],["Age",f=>num(f.age,1)+" yrs"],
+   ["1Y",f=>pc(f.r1y)],["3Y CAGR",f=>pc(f.r3y)],["5Y CAGR",f=>pc(f.r5y)],["10Y CAGR",f=>pc(f.r10y)],["SIP 5Y XIRR",f=>pc(f.sip5)],["Median 3Y rolling",f=>pc(f.rr3_med)],["Worst 3Y rolling",f=>pc(f.rr3_min)],
+   ["Beat index (3Y windows)",f=>pct(f.rr3_bb,0)],["Volatility 3Y",f=>pct(f.vol3)],["Max drawdown",f=>pc(f.mdd)],["Down / up capture",f=>`${num(f.dnc3,0)} / ${num(f.upc3,0)}`],["Sharpe / Sortino",f=>`${num(f.sharpe3)} / ${num(f.sortino3)}`],
+   ["Style L/M/S/Gold/Debt",f=>f.style?Object.values(f.style).map(x=>x.toFixed(0)).join(" / "):"–"],["Flags",f=>(f.flags||[]).filter(x=>x[0]!=="info").length]];
+  // overlapping period growth
+  const series=fs.map((f,i)=>{const d=ds[i];return{f,t:d.t,v:seriesFor(d,f.code)}});
+  const common=Math.max(...series.map(s=>s.t[s.v.findIndex(isN)]));
+  const yrs=(series[0].t[series[0].t.length-1]-common)/864e5/365.25;
+  const ser=series.map((s,i)=>({name:s.f.name,color:COLORS[i],pts:rebase(ptsFrom(s.t,s.v,common)),w:2.6}));
+  // correlations (last 3y weekly)
+  const cut=series[0].t[series[0].t.length-1]-3*365.25*864e5;
+  const rets=series.map(s=>{const m=weeklyRets(s.t,s.v);for(const k of [...m.keys()])if(k<cut)m.delete(k);return m});
+  $("#cbody").innerHTML=`<div class="card"><h2>Growth of ₹10,000 over the common period (${num(yrs,1)} yrs)</h2>${legend(ser)}<div id="cc1"></div></div>
+   <div class="card"><h2>Side by side</h2><div class="tw" style="max-height:none"><table><thead><tr><th class="l">Metric</th>${fs.map((f,i)=>`<th style="color:${COLORS[i]};white-space:normal;min-width:150px">${esc(f.name)}</th>`).join("")}</tr></thead>
+   <tbody>${rows.map(r=>`<tr><td class="l">${r[0]}</td>${fs.map(f=>`<td>${r[1](f)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div>
+   ${fs.length>1?`<div class="card"><h2>How alike are they? (weekly-return correlation, 3Y)</h2><table><thead><tr><th></th>${fs.map((f,i)=>`<th style="color:${COLORS[i]}">${i+1}</th>`).join("")}</tr></thead><tbody>
+   ${fs.map((f,i)=>`<tr><td class="l"><b style="color:${COLORS[i]}">${i+1}</b> ${esc(f.name)}</td>${fs.map((g,j)=>{const c=i===j?1:corr(rets[i],rets[j]);return`<td style="${isN(c)&&c>.95&&i!==j?"background:var(--downbg);font-weight:700":""}">${num(c,2)}</td>`}).join("")}</tr>`).join("")}</tbody></table>
+   <p class="note">Above 0.95 the two funds move almost identically — holding both adds little diversification.</p></div>`:""}`;
+  lineChart($("#cc1"),{series:ser,yfmt:x=>"₹"+Math.round(x).toLocaleString("en-IN")});
+}
+
+// ================================================================== PORTFOLIO DOCTOR
+async function vDoctor(app){
+  S.port=S.port.filter(p=>S.by[p.code]);
+  app.innerHTML=`<div class="card"><h2>Portfolio Doctor</h2><p class="lede">Add the funds you hold and the current value of each. You get the real asset mix, cost, overlap, weak links and better alternatives. Saved only in this browser.</p>
+   <div id="ps"></div><div id="plist" style="margin-top:10px"></div></div><div id="pbody"></div>`;
+  searchBox($("#ps"),f=>{if(!S.port.find(p=>p.code===f.code))S.port.push({code:f.code,amt:100000});LS.set("port",S.port);vDoctor(app)},{placeholder:"Add a fund you hold…"});
+  const L=$("#plist");
+  L.innerHTML=S.port.length?`<table><thead><tr><th class="l">Fund</th><th>Value (₹)</th><th></th></tr></thead><tbody>${S.port.map((p,i)=>`<tr><td class="l fname">${esc(S.by[p.code].name)}<small>${esc(S.by[p.code].cat)}</small></td><td><input type="number" min="0" step="1000" value="${p.amt}" data-i="${i}" style="width:150px;padding:7px;border:1px solid var(--line);border-radius:6px;background:var(--card)"></td><td><button class="btn sm ghost" data-x="${i}">Remove</button></td></tr>`).join("")}</tbody></table>`:'<p class="note">No holdings yet.</p>';
+  $$("input[data-i]",L).forEach(inp=>inp.onchange=()=>{S.port[+inp.dataset.i].amt=+inp.value||0;LS.set("port",S.port);diagnose()});
+  $$("button[data-x]",L).forEach(b=>b.onclick=()=>{S.port.splice(+b.dataset.x,1);LS.set("port",S.port);vDoctor(app)});
+  if(S.port.length)diagnose();
+  async function diagnose(){
+    const H=S.port.map(p=>({...p,f:S.by[p.code]})).filter(h=>h.amt>0);const tot=H.reduce((s,h)=>s+h.amt,0);if(!tot)return;
+    H.forEach(h=>h.w=h.amt/tot);
+    // effective asset mix
+    const mix={Large:0,Mid:0,Small:0,Gold:0,"Debt/Cash":0};let covered=0;
+    H.forEach(h=>{const f=h.f;let st=f.style;
+      if(!st){if(f.grp==="Debt"||/Index \(Debt\)|Liquid|Overnight/.test(f.cat))st={"Debt/Cash":100};else if(/Gold/.test(f.cat))st={Gold:100};else if(f.cat==="Index (Equity)")st=/midcap/i.test(f.name)?{Mid:100}:/smallcap/i.test(f.name)?{Small:100}:{Large:100};else if(f.cat==="Arbitrage")st={"Debt/Cash":100}}
+      if(st){covered+=h.w;for(const k in st)mix[k]=(mix[k]||0)+h.w*st[k]}});
+    const terW=H.reduce((s,h)=>s+(isN(h.f.ter)?h.w*h.f.ter:0),0);
+    const scW=H.filter(h=>isN(h.f.score));const scoreW=scW.reduce((s,h)=>s+h.w*h.f.score,0)/Math.max(1e-9,scW.reduce((s,h)=>s+h.w,0));
+    const cats={};H.forEach(h=>cats[h.f.cat]=(cats[h.f.cat]||0)+h.w);
+    const amcs={};H.forEach(h=>amcs[h.f.amc]=(amcs[h.f.amc]||0)+h.w);
+    const ds=await Promise.all(H.map(h=>loadSeries(h.f.cat)));
+    const cut=Date.now()-3*365.25*864e5;
+    const R=H.map((h,i)=>{const d=ds[i],m=weeklyRets(d.t,seriesFor(d,h.code)||[]);for(const k of [...m.keys()])if(k<cut)m.delete(k);return m});
+    const dup=[];for(let i=0;i<H.length;i++)for(let j=i+1;j<H.length;j++){const c=corr(R[i],R[j]);if(isN(c)&&c>.95)dup.push([H[i],H[j],c])}
+    // portfolio weekly return series for risk
+    const keys=[...new Set(R.flatMap(m=>[...m.keys()]))].sort((a,b)=>a-b);
+    const pr=keys.map(k=>{let s=0,w=0;R.forEach((m,i)=>{if(m.has(k)){s+=m.get(k)*H[i].w;w+=H[i].w}});return w>.8?s/w:null}).filter(isN);
+    const vol=pr.length>30?Math.sqrt(pr.reduce((s,x)=>s+x*x,0)/pr.length-(pr.reduce((s,x)=>s+x,0)/pr.length)**2)*Math.sqrt(52):null;
+    let lv=1,pk=1,mdd=0;pr.forEach(x=>{lv*=1+x;pk=Math.max(pk,lv);mdd=Math.min(mdd,lv/pk-1)});const ann=pr.length?Math.pow(lv,52/pr.length)-1:null;
+    const issues=[];
+    H.forEach(h=>{(h.f.flags||[]).filter(x=>x[0]==="red").forEach(x=>issues.push(["red",`<b>${esc(h.f.name)}</b>: ${esc(x[1])}`]));
+      if(h.f.verdict==="Weak"){const alt=shortlist(h.f.cat,2).filter(a=>a.code!==h.code);issues.push(["amber",`<b>${esc(h.f.name)}</b> scores ${h.f.score.toFixed(0)}/100 in its category.${alt.length?` Better-behaved peers: ${alt.map(a=>`<a href="#fund-${a.code}">${esc(a.name)}</a> (${a.score.toFixed(0)})`).join(", ")}.`:""}`])}
+      if(h.w<.03)issues.push(["info",`<b>${esc(h.f.name)}</b> is only ${pct(h.w,1)} of the portfolio — too small to matter; consider consolidating.`])});
+    dup.forEach(([a,b,c])=>issues.push(["amber",`<b>${esc(a.f.name)}</b> and <b>${esc(b.f.name)}</b> move almost identically (correlation ${c.toFixed(2)}). Keep one.`]));
+    Object.entries(cats).forEach(([c,w])=>{if(w>.5&&H.length>2)issues.push(["amber",`${pct(w,0)} sits in one category (${esc(c)}).`])});
+    Object.entries(amcs).forEach(([a,w])=>{if(w>.5&&H.length>2)issues.push(["info",`${pct(w,0)} is with one fund house (${esc(a)}) — fine legally, but spreads manager risk thinly.`])});
+    if(H.length>8)issues.push(["amber",`${H.length} funds is more than most investors need; 4–6 well-chosen funds give the same diversification with less overlap.`]);
+    const eqShare=(mix.Large+mix.Mid+mix.Small)/Math.max(covered,1e-9)/100;
+    const catCount={};H.forEach(h=>{catCount[h.f.cat]=(catCount[h.f.cat]||[]).concat(h.f.name)});
+    Object.entries(catCount).forEach(([c,n])=>{if(n.length>1&&!/Index/.test(c))issues.push(["info",`${n.length} funds in ${esc(c)} (${n.map(esc).join(", ")}). Two funds in one category rarely add diversification — fine only if they behave differently (check Compare).`])});
+    if((mix.Small+mix.Mid)/Math.max(1e-9,mix.Large+mix.Mid+mix.Small)>.55)issues.push(["amber",`Mid+small caps are ${pct((mix.Mid+mix.Small)/(mix.Large+mix.Mid+mix.Small),0)} of your equity — expect 35–60% falls in a bad year.`]);
+    if(!issues.length)issues.push(["green","No major problems found. Keep costs low and rebalance once a year."]);
+    const stCols={Large:"#1F5FAE",Mid:"#C77D0A",Small:"#D4462C",Gold:"#E3A13A","Debt/Cash":"#0E8A6E"};
+    const mixN=Object.fromEntries(Object.entries(mix).map(([k,v])=>[k,v/Math.max(covered,1e-9)]));
+    $("#pbody").innerHTML=`<div class="grid g4">
+      <div class="kpi"><div class="l">Portfolio value</div><div class="v">${inr(tot)}</div><div class="s">${H.length} funds</div></div>
+      <div class="kpi"><div class="l">Weighted TER</div><div class="v">${terW.toFixed(2)}%</div><div class="s">≈ ${inr(tot*terW/100)} a year in fees</div></div>
+      <div class="kpi"><div class="l">Weighted PKC Score</div><div class="v">${isN(scoreW)?scoreW.toFixed(0):"–"}</div><div class="s">within each fund's category</div></div>
+      <div class="kpi"><div class="l">Portfolio 3Y: CAGR · vol · max fall</div><div class="v" style="font-size:22px">${pct(ann)} · ${pct(vol)} · <span class="dn">${pct(mdd,0)}</span></div><div class="s">if held in today's weights</div></div></div>
+     <div class="card" style="margin-top:16px"><h2>Your real asset mix</h2><p class="lede">From each fund's returns-based style, weighted by value. ~${pct(eqShare,0)} effective equity.</p>
+      <div class="stack">${Object.entries(mixN).filter(e=>e[1]>.001).map(([k,x])=>`<i style="width:${x}%;background:${stCols[k]}"></i>`).join("")}</div>
+      <div class="legend">${Object.entries(mixN).map(([k,x])=>`<span style="--c:${stCols[k]}">${k} <b>${x.toFixed(0)}%</b></span>`).join("")}</div></div>
+     <div class="card"><h2>Diagnosis</h2>${issues.map(x=>`<div class="flag ${x[0]}">${x[1]}</div>`).join("")}</div>
+     <div class="card"><h2>Holdings detail</h2>${fundTable(H.map(h=>h.f),["score","r3y","r5y","rr3_bb","dnc3","vol3","ter","aum"])}</div>`;
+    $$("#pbody tr[data-code]").forEach(tr=>tr.onclick=()=>go("fund",+tr.dataset.code));
+  }
+}
+
+// ================================================================== CALCULATORS
+async function vCalc(app){
+  app.innerHTML=`<div class="grid g2">
+   <div class="card"><h2>SIP back-test on a real fund</h2><p class="lede">What a monthly SIP in this exact fund actually became — real NAVs, no assumed return.</p>
+    <div id="sipS"></div><div class="ctrl" style="margin-top:10px"><label>Monthly SIP (₹)<input id="sipA" type="number" value="10000" step="500"></label><label>Years back<input id="sipY" type="number" value="5" min="1" max="13"></label><label>Annual step-up %<input id="sipU" type="number" value="0" min="0" max="25"></label></div>
+    <div id="sipOut"></div></div>
+   <div class="card"><h2>Goal planner</h2><p class="lede">How much SIP a goal needs, using returns that the category has <i>actually</i> delivered (median and bad-case 3-year rolling CAGR), not a hopeful 12%.</p>
+    <div class="ctrl"><label>Goal today's cost (₹)<input id="gA" type="number" value="2500000" step="50000"></label><label>Years<input id="gY" type="number" value="10" min="1" max="40"></label><label>Inflation %<input id="gI" type="number" value="6" step="0.5"></label>
+    <label>Category<select id="gC">${["Flexi Cap","Large Cap","Large & Mid Cap","Mid Cap","Small Cap","Aggressive Hybrid","Balanced Advantage","Short Duration","Corporate Bond"].map(c=>`<option>${c}</option>`).join("")}</select></label><label>Step-up %<input id="gU" type="number" value="0" min="0" max="20"></label></div>
+    <div id="gOut"></div></div></div>
+   <div class="card"><h2>Redemption tax estimator (FY 2026-27 rules)</h2>
+    <div class="ctrl"><label>Fund type<select id="tT"><option value="eq">Equity / ELSS / Arbitrage / Aggressive hybrid</option><option value="debt">Debt / Liquid (bought after 1-Apr-2023)</option></select></label>
+     <label>Invested (₹)<input id="tI" type="number" value="500000"></label><label>Current value (₹)<input id="tV" type="number" value="800000"></label><label>Held (months)<input id="tM" type="number" value="24"></label>
+     <label>Your slab %<input id="tS" type="number" value="30"></label><label>Other LTCG this FY (₹)<input id="tO" type="number" value="0"></label></div><div id="tOut"></div>
+    <p class="note">Equity-oriented: STCG 20% (≤12 months); LTCG 12.5% on gains above ₹1.25 lakh per year. Debt funds bought on/after 1 Apr 2023: gains taxed at slab regardless of holding. Cess (4%) and surcharge not included. Not tax advice.</p></div>`;
+  let sipF=S.funds.find(f=>/parag parikh flexi/i.test(f.name))||S.funds[0];
+  const sipBox=$("#sipS");searchBox(sipBox,f=>{sipF=f;sip()},{placeholder:"Pick a fund (default: "+sipF.name+")"});
+  async function sip(){const d=await loadSeries(sipF.cat),v=seriesFor(d,sipF.code),t=d.t;const A=+$("#sipA").value||0,Y=+$("#sipY").value||1,U=(+$("#sipU").value||0)/100;
+    const end=t.length-1,startT=t[end]-Y*365.25*864e5;let units=0,inv=0,lastM=-1,amt=A,cf=[],n=0;const path=[];
+    for(let i=0;i<t.length;i++){if(t[i]<startT||!isN(v[i]))continue;const dt=new Date(t[i]),m=dt.getUTCFullYear()*12+dt.getUTCMonth();if(m!==lastM&&n<Y*12){if(n>0&&n%12===0)amt*=1+U;units+=amt/v[i];inv+=amt;cf.push([t[i],-amt]);lastM=m;n++}path.push([t[i],units*v[i],inv])}
+    if(!n){$("#sipOut").innerHTML='<p class="note">Fund too young for this period.</p>';return}
+    const val=units*v[end];cf.push([t[end],val]);const x=xirrJS(cf);
+    $("#sipOut").innerHTML=`<p><b>${esc(sipF.name)}</b>: ${n} instalments, invested <b>${inr(inv)}</b> → worth <b class="up">${inr(val)}</b> · XIRR <b>${pct(x)}</b></p><div id="sipCh"></div>`;
+    lineChart($("#sipCh"),{series:[{name:"Value",color:"var(--c3)",pts:path.map(p=>[p[0],p[1]]),w:3},{name:"Invested",color:"var(--cb)",pts:path.map(p=>[p[0],p[2]]),dash:true}],yfmt:x=>x>=1e7?"₹"+(x/1e7).toFixed(1)+"Cr":"₹"+(x/1e5).toFixed(1)+"L",h:260})}
+  ["#sipA","#sipY","#sipU"].forEach(s=>$(s).onchange=sip);sip();
+  const goal=()=>{const A=+$("#gA").value,Y=+$("#gY").value,I=(+$("#gI").value)/100,U=(+$("#gU").value||0)/100,c=$("#gC").value;
+    const fs=S.funds.filter(f=>f.cat===c);const med=median(fs.map(f=>f.rr3_med)),bad=median(fs.map(f=>f.rr3_min)),fv=A*Math.pow(1+I,Y);
+    const need=r=>{if(!isN(r))return null;const i=Math.pow(1+r,1/12)-1;let fvp=0,amt=1;for(let m=0;m<Y*12;m++){if(m>0&&m%12===0)amt*=1+U;fvp+=amt*Math.pow(1+i,Y*12-m)}return fv/fvp};
+    const rs=[["Category median 3Y rolling CAGR",med],["Bad case (median fund's worst 3Y window, last 5 yrs)",Math.max(bad??0,.02)],["Conservative 8%",.08]];
+    $("#gOut").innerHTML=`<p>Goal in future rupees: <b>${inr(fv)}</b> (${inr(A)} today at ${pct(I,1)} inflation for ${Y} yrs)</p><table>${rs.map(([l,r])=>`<tr><td class="l">${l} · ${pct(r)}</td><td><b>${inr(need(r))}</b>/month${U?" (starting)":""}</td></tr>`).join("")}</table><p class="note">Planning on the bad case gives a margin of safety. Move money to debt 2–3 years before the goal.</p>`};
+  ["#gA","#gY","#gI","#gC","#gU"].forEach(s=>$(s).onchange=goal);goal();
+  const tax=()=>{const ty=$("#tT").value,I=+$("#tI").value,V=+$("#tV").value,M=+$("#tM").value,sl=(+$("#tS").value)/100,O=+$("#tO").value||0,g=V-I;let t=0,how="";
+    if(g<=0){how="No gain — no tax (a loss can be set off against other capital gains)."}else if(ty==="debt"){t=g*sl;how=`Taxed at your slab ${pct(sl,0)}.`}
+    else if(M<=12){t=g*.2;how="Short-term (≤12 months): 20%."}else{const ex=Math.max(0,125000-O);t=Math.max(0,g-ex)*.125;how=`Long-term: 12.5% on gain above the unused ₹1.25 lakh exemption (${inr(ex)} left).`}
+    $("#tOut").innerHTML=`<p>Gain ${inr(g)} · ${how} Tax ≈ <b class="dn">${inr(t)}</b> · In hand ≈ <b>${inr(V-t)}</b></p>`};
+  ["#tT","#tI","#tV","#tM","#tS","#tO"].forEach(s=>$(s).onchange=tax);tax();
+}
+function xirrJS(cf){const t0=cf[0][0];let r=.1;for(let k=0;k<80;k++){let f=0,df=0;for(const[d,a]of cf){const y=(d-t0)/864e5/365.25;f+=a/Math.pow(1+r,y);df+=-y*a/Math.pow(1+r,y+1)}const nr=r-f/df;if(!isFinite(nr))break;if(Math.abs(nr-r)<1e-9){r=nr;break}r=Math.max(nr,-.95)}return r}
+
+// ================================================================== EVIDENCE & METHOD
+function vEvidence(app){
+  const b=S.bt||{},ic=b.ic||{};
+  const lab={tr1:"1Y trailing return",tr3:"3Y trailing return",cons:"Consistency vs peers (1Y windows)",mrar:"Risk-adjusted return (MRAR)",sortino:"Sortino ratio",mdd:"Max drawdown (shallower = higher)",vol:"Volatility",dnc:"Downside capture",upc:"Upside capture",ir:"Information ratio",ter:"TER (today's)",score:"Composite score (NAV-only)"};
+  const cell=x=>x&&isN(x.ic)?`<td style="${Math.abs(x.t)>=2?"font-weight:700":"color:var(--muted)"}">${x.ic>=0?"+":""}${x.ic.toFixed(2)} <span class="mini mut">t ${x.t.toFixed(1)}</span></td>`:"<td>–</td>";
+  const Q=(m)=>b[m]?b[m].q_mean.map((x,i)=>`<td>${pc(x,2)}<br><span class="mini mut">hit ${pct(b[m].q_hit[i],0)}</span></td>`).join(""):"";
+  app.innerHTML=`<div class="card"><h2>Does any of this predict the future? — our point-in-time backtest</h2>
+   <p class="lede">At ${b.n_dates} dates (${(b.dates||[]).join(" → ")}), every 6 months, we ranked funds in ${((b.cats||[]).length)} active categories using <b>only data available on that date</b>, then measured each fund's next-3-year CAGR minus its category median. ${b.n_obs?b.n_obs.toLocaleString("en-IN"):"–"} fund-snapshots in total.</p>
+   <h3>Quintiles: average next-3Y excess return (Q1 = worst-ranked, Q5 = best-ranked)</h3>
+   <table><thead><tr><th class="l">Ranked by</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Q5</th><th>Rank corr.</th></tr></thead><tbody>
+   <tr><td class="l">Plain 3Y trailing return</td>${Q("tr3")}<td>${num(b.tr3&&b.tr3.ic,3)}</td></tr>
+   <tr><td class="l">Composite score (NAV-only)</td>${Q("score")}<td>${num(b.score&&b.score.ic,3)}</td></tr></tbody></table>
+   <div class="callout"><b>Finding:</b> neither past returns nor a risk-adjusted composite separates future winners from losers — top and bottom quintiles end up within a fraction of a percent of each other, and "hit rates" sit near 50%. Top-quartile funds stayed top-quartile ${pct((b.persist||{}).stay_top,0)} of the time (random = 25%). This matches SPIVA's persistence studies. That is why this tool does <b>not</b> promise to pick the next top fund.</div>
+   <h3>What <i>is</i> predictable? Rank correlation of each signal with future outcomes</h3>
+   <div class="tw" style="max-height:none"><table><thead><tr><th class="l">Signal (measured at T)</th><th>Next-3Y excess return</th><th>Next-3Y volatility</th><th>Next-3Y max drawdown</th><th>Next-3Y downside capture</th></tr></thead><tbody>
+   ${Object.keys(lab).filter(k=>ic[k]).map(k=>`<tr><td class="l">${lab[k]}</td>${cell(ic[k].fxs)}${cell(ic[k].fvol)}${cell(ic[k].fmdd)}${cell(ic[k].fdnc)}</tr>`).join("")}</tbody></table></div>
+   <p class="note">Bold = statistically meaningful (|t| ≥ 2 across snapshots). Volatility and capture ratios persist strongly — a fund that fell less than the market tends to keep falling less. High-volatility / high-upside funds earned a little more in this mostly-rising decade: that is market beta, not skill. <b>TER</b> shows the strongest link of all (cheaper → better next 3 years), matching Morningstar's long-standing finding that expense ratio is the most dependable predictor. But we only have <i>today's</i> TER: funds that did well grew large and SEBI's slab caps then pushed their TER down, so part of this link is reverse causation. Treat cost as important, not as proof.</p>
+   <h3>By category — did the score's top quintile beat its peers next?</h3>
+   <table><thead><tr><th class="l">Category</th><th>Snapshots</th><th>Score top-20% hit</th><th>…excess</th><th>Return top-20% hit</th><th>…excess</th></tr></thead><tbody>
+   ${(b.by_cat||[]).map(r=>`<tr><td class="l">${esc(r.cat)}</td><td>${r.n}</td><td>${pct(r.top_hit,0)}</td><td>${pc(r.top_xs,2)}</td><td>${pct(r.tr_top_hit,0)}</td><td>${pc(r.tr_top_xs,2)}</td></tr>`).join("")}</tbody></table>
+   <p class="note">Caveats: only funds alive today are included (survivorship bias); categories are as of today (post-2018 SEBI re-categorisation mixes old mandates); NAV-only version of the score (cost and size history unavailable).</p></div>
+  <div class="card"><h2>How the PKC Score is built</h2>
+   <p>Within each category, among funds with ≥3 years of history, every metric is turned into a percentile (0 = worst peer, 100 = best). Pillars, weights:</p>
+   <table><thead><tr><th class="l">Pillar</th><th class="l">Equity & hybrid</th><th class="l">Debt</th></tr></thead><tbody>
+    <tr><td class="l"><b>Cost (25 / 25)</b></td><td class="l">Direct-plan TER (lower better)</td><td class="l">Direct-plan TER</td></tr>
+    <tr><td class="l"><b>Downside (25 / 30)</b></td><td class="l">Downside capture 3Y, max drawdown 3Y, shortfall vs risk-free</td><td class="l">Max drawdown 3Y, volatility, credit-event count</td></tr>
+    <tr><td class="l"><b>Consistency (20 / 20)</b></td><td class="l">% of 3Y & 5Y rolling windows beating the investable index fund</td><td class="l">% of 1Y windows beating the peer median, worst 1Y window</td></tr>
+    <tr><td class="l"><b>Returns (20 / 20)</b></td><td class="l">Morningstar-style MRAR(2) 3Y, information ratio 3Y</td><td class="l">3Y CAGR, median 1Y rolling return</td></tr>
+    <tr><td class="l"><b>Robustness (10 / 5)</b></td><td class="l">Fund size (log, capped at ₹20k cr), track-record length</td><td class="l">Fund size</td></tr></tbody></table>
+   <p>Weights lean on what the backtest showed is <b>persistent</b> (cost, downside behaviour) and down-weight raw past return. Index funds are scored only against funds tracking the <i>same</i> index: 1-year return gap vs same-index median (tracking difference), tracking-error volatility, TER, size. Verdict bands: Strong ≥75, Good 60–75, Average 40–60, Weak &lt;40.</p>
+   <h3>Benchmarks you can actually buy</h3><p>Each equity category is compared with the <b>median of real index funds</b> tracking its natural index (Nifty 50/100, Midcap 150, Smallcap 250, Nifty 500, LargeMidcap 250, gold). Because those index funds already pay their own costs, "beat the benchmark" here means "beat the index fund you could have bought instead". Hybrid benchmarks are fixed blends (e.g. Aggressive Hybrid = 70% Nifty 50 + 30% short-duration debt median). Debt funds are compared with their category median. Risk-free = median overnight fund.</p>
+   <h3>Other methods</h3><ul>
+    <li><b>Rolling returns & consistency</b> — every 1/3/5-year window ending each week over the last 5 years (Freefincal-style outperformance consistency).</li>
+    <li><b>Capture ratios</b> — monthly returns, geometric, up-months vs down-months of the benchmark.</li>
+    <li><b>MRAR(2)</b> — Morningstar risk-adjusted return with γ=2 on monthly excess returns.</li>
+    <li><b>Shortfall</b> — Value-Research-style average monthly return below the risk-free rate.</li>
+    <li><b>Style analysis</b> — Sharpe (1992) returns-based style: constrained least squares (weights ≥0, sum 100%) on Nifty 50 / Midcap 150 / Smallcap 250 / gold / debt index-fund returns; 3Y vs 1Y to spot drift.</li>
+    <li><b>Credit-event scan</b> — one-day NAV falls in debt funds larger than 0.6% and 6× the fund's normal daily noise <i>and</i> at least 0.5% worse than the category median that day (so market-wide rate shocks like 19-Mar-2020 or 4-May-2022 are ignored). Gilt and long-duration categories are skipped. Red if within 3 years, amber if older.</li>
+    <li><b>AUM</b> — AMFI scheme-wise average AUM (latest quarter), summed across all plans and options of a scheme.</li></ul></div>
+  <div class="card"><h2>Fund Finder rules</h2><ul>
+   <li>Emergency → Liquid 50 / Money market 30 / Overnight 20. Under 1 year → Arbitrage 60 / Liquid 40. 1–3 years → Arbitrage, short-duration, money-market.</li>
+   <li>3+ years: equity share = min(cap from the fall you can tolerate: 10%→20, 20%→40, 30%→65, 40%→80, 55%→100; cap from horizon: &lt;5y→40, &lt;7y→65, &lt;10y→80, else 100).</li>
+   <li>Equity ≤40% → Balanced Advantage + short-duration. Otherwise core Flexi Cap 45%, Nifty 50 index 25%, and Mid/Small (7y+, ≥40% tolerance) or Large & Mid for the rest. Debt balance in Corporate Bond (7y+) or Short Duration.</li>
+   <li>Shortlist gates: ≥3 years, AUM ≥₹500 cr (debt ₹300 cr), no red flags; ranked by PKC Score.</li></ul></div>
+  <div class="card"><h2>Data sources (refreshed by the daily job)</h2><ul>
+   <li>AMFI NAVAll — scheme universe, SEBI category, latest NAV (portal.amfiindia.com/spages/NAVAll.txt)</li>
+   <li>MFAPI.in — full daily NAV history per scheme (api.mfapi.in)</li>
+   <li>AMFI TER disclosure — daily Base Expense Ratio, brokerage, statutory levies, TER, Direct & Regular (amfiindia.com)</li>
+   <li>AMFI average AUM — scheme-wise, latest quarter: ${esc(S.meta.aum_period||"")}</li>
+   <li>Methods: Value Research rating methodology; Morningstar Rating/MRAR methodology; CRISIL MF Ranking parameters; Freefincal rolling-return & capture consistency; S&P SPIVA India and Persistence scorecards; Sharpe (1992) style analysis; SEBI categorisation circular of 26-Feb-2026 and SEBI (MF) Regulations 2026 (BER/TER).</li></ul>
+   <p class="note">Data as of ${esc(S.meta.asof)} · built ${esc(S.meta.built)}. For research and education; not investment advice. Past performance does not guarantee future returns; mutual fund investments are subject to market risks — read all scheme documents.</p></div>`;
+}
+
+// ------------------------------------------------------------------ boot
+(async function(){
+  try{const th=LS.get("theme",null);if(th)document.documentElement.dataset.theme=th;
+    const [m,f,b]=await Promise.all([getJSON("data/meta.json"),getJSON("data/funds.json"),getJSON("data/backtest.json").catch(()=>({}))]);
+    S.meta=m;S.funds=f;S.bt=b;f.forEach(x=>S.by[x.code]=x);S.cmp=LS.get("cmp",[]);S.port=LS.get("port",[]);
+    $("#asof").textContent=`NAVs as of ${fmtD(new Date(m.asof).getTime())} · ${m.n.toLocaleString("en-IN")} Direct-Growth schemes`;
+    const h=location.hash.slice(1);if(h.startsWith("fund-")){S.fund=+h.slice(5);S.view="fund"}else if(h)S.view=h;
+    render();
+  }catch(e){$("#app").innerHTML=`<div class="card">Could not load data: ${esc(e.message)}</div>`}
+})();
+</script>
+</body>
+</html>
